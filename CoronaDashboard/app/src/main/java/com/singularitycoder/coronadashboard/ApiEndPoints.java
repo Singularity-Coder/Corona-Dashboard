@@ -8,8 +8,8 @@ public interface ApiEndPoints {
 
     @GET("/{ver}/{dis}/{qty}")
     Single<CoronaResponse> getCoronaStatistics(
-            @Path("ver") String version,
-            @Path("dis") String disease,
+            @Path(value = "ver", encoded = true) String version,
+            @Path(value = "dis", encoded = true) String disease,
             @Path(value = "qty", encoded = true) String quantity
     );
 }
