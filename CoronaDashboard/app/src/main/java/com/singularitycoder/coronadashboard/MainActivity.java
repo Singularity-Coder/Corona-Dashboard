@@ -39,8 +39,14 @@ import androidx.test.espresso.IdlingResource;
 
 import com.singularitycoder.coronadashboard.databinding.ActivityMainBinding;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -83,6 +89,13 @@ public final class MainActivity extends AppCompatActivity {
         setUpRecyclerView();
         getCoronaData();
         binding.swipeRefreshLayout.setOnRefreshListener(this::getCoronaData);
+        Log.d(TAG, "onCreate: " + Math.ceil(7760279314L));
+        Log.d(TAG, "onCreate: " + Math.round(7760279314L));
+        Log.d(TAG, "onCreate: " + (double) Math.round(7760279314L));
+        Log.d(TAG, "onCreate: " + Math.round(Math.floor(7760279314L)));
+        Log.d(TAG, "onCreate: " + Integer.MIN_VALUE);
+        Log.d(TAG, "onCreate: " + Integer.MAX_VALUE);
+        Log.d(TAG, "onCreate: " + "HelloWorld".length());
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -163,27 +176,27 @@ public final class MainActivity extends AppCompatActivity {
                             coronaStatisticList.clear();
                             CoronaResponse coronaResponse = (CoronaResponse) requestStateMediator.getData();
 
-                            coronaStatisticList.add(new CoronaStatisticItem("Updated", valueOf(coronaResponse.getUpdated())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Cases", valueOf(coronaResponse.getCases())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Cases Today", valueOf(coronaResponse.getTodayCases())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Deaths", valueOf(coronaResponse.getDeaths())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Today", valueOf(coronaResponse.getTodayDeaths())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Recovered", valueOf(coronaResponse.getRecovered())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Today", valueOf(coronaResponse.getTodayRecovered())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Active", valueOf(coronaResponse.getActive())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Critical", valueOf(coronaResponse.getCritical())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Cases Per One Million", valueOf(coronaResponse.getCasesPerOneMillion())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Per One Million", valueOf(coronaResponse.getDeathsPerOneMillion())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Tests", valueOf(coronaResponse.getTests())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Tests Per One Million", valueOf(coronaResponse.getTestsPerOneMillion())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Population", valueOf(coronaResponse.getPopulation())));
-                            coronaStatisticList.add(new CoronaStatisticItem("One Case Per People", valueOf(coronaResponse.getOneCasePerPeople())));
-                            coronaStatisticList.add(new CoronaStatisticItem("One Death Per People", valueOf(coronaResponse.getOneDeathPerPeople())));
-                            coronaStatisticList.add(new CoronaStatisticItem("One Test Per People", valueOf(coronaResponse.getOneTestPerPeople())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Active Per One Million", valueOf(coronaResponse.getActivePerOneMillion())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Per One Million", valueOf(coronaResponse.getRecoveredPerOneMillion())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Critical Per One Million", valueOf(coronaResponse.getCriticalPerOneMillion())));
-                            coronaStatisticList.add(new CoronaStatisticItem("Affected Countries", valueOf(coronaResponse.getAffectedCountries())));
+                            coronaStatisticList.add(new CoronaStatisticItem("Updated On", valueOf(getDateTime(new Date((long) coronaResponse.getUpdated())))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Cases", roundOffNumber(valueOf(coronaResponse.getCases()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Cases Today", roundOffNumber(valueOf(coronaResponse.getTodayCases()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Deaths", roundOffNumber(valueOf(coronaResponse.getDeaths()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Today", roundOffNumber(valueOf(coronaResponse.getTodayDeaths()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Recovered", roundOffNumber(valueOf(coronaResponse.getRecovered()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Today", roundOffNumber(valueOf(coronaResponse.getTodayRecovered()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Active", roundOffNumber(valueOf(coronaResponse.getActive()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Critical", roundOffNumber(valueOf(coronaResponse.getCritical()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Cases Per One Million", roundOffNumber(valueOf(coronaResponse.getCasesPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Per One Million", roundOffNumber(valueOf(coronaResponse.getDeathsPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Total Tests", roundOffNumber(valueOf(coronaResponse.getTests()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Tests Per One Million", roundOffNumber(valueOf(coronaResponse.getTestsPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Total Population", roundOffNumber(valueOf(coronaResponse.getPopulation()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("One Case Per People", roundOffNumber(valueOf(coronaResponse.getOneCasePerPeople()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("One Death Per People", roundOffNumber(valueOf(coronaResponse.getOneDeathPerPeople()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("One Test Per People", roundOffNumber(valueOf(coronaResponse.getOneTestPerPeople()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Active Per One Million", roundOffNumber(valueOf(coronaResponse.getActivePerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Per One Million", roundOffNumber(valueOf(coronaResponse.getRecoveredPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Critical Per One Million", roundOffNumber(valueOf(coronaResponse.getCriticalPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Affected Countries", roundOffNumber(valueOf(coronaResponse.getAffectedCountries()))));
 
                             coronaStatisticsAdapter.notifyDataSetChanged();
                             binding.swipeRefreshLayout.setRefreshing(false);
@@ -222,6 +235,103 @@ public final class MainActivity extends AppCompatActivity {
             };
         }
         return observer;
+    }
+
+    private String roundOffNumber(String number) {
+//        double result = (double) Math.round(number * 100)/100;
+        double result = (double) Math.round(Double.parseDouble(number));
+        String resultString = valueOf(result);
+
+        Log.d(TAG, "roundOffNumber: " + number);
+
+        // Thousand
+        if (resultString.length() == 4) {
+            return resultString.charAt(0) + "K";
+        }
+
+         else if (resultString.length() == 5) {
+            return resultString.charAt(0) + resultString.charAt(1) + "K";
+        }
+
+        else if (resultString.length() == 6) {
+            return resultString.charAt(0) + resultString.charAt(1) + resultString.charAt(2) + "K";
+        }
+
+        // Million
+        else if (resultString.length() == 7) {
+            return resultString.charAt(0) + "M";
+        }
+
+        else if (resultString.length() == 8) {
+            return resultString.charAt(0) + resultString.charAt(1) + "M";
+        }
+
+        else if (resultString.length() == 9) {
+            return resultString.charAt(0) + resultString.charAt(1) + resultString.charAt(2) + "M";
+        }
+
+        // Billion
+        else if (resultString.length() == 10) {
+            String billionResult = valueOf(Math.round(Math.floor(Double.parseDouble(resultString))));
+            return billionResult.charAt(0) + "B";
+        }
+
+        else if (resultString.length() == 11) {
+            return resultString.charAt(0) + resultString.charAt(1) + "B";
+        }
+
+        else if (resultString.length() == 12) {
+            return resultString.charAt(0) + resultString.charAt(1) + resultString.charAt(2) + "B";
+        }
+
+        // Trillion
+        else if (resultString.length() == 13) {
+            return resultString.charAt(0) + "T";
+        }
+
+        else {
+            return resultString;
+        }
+    }
+
+    private void epochToDate(long epochTime) {
+        Date date = new Date(epochTime);
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+        String formatted = format.format(date);
+        System.out.println(formatted);
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public final String getDateTime(Date date) {
+
+        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+        // split date and time for event created date
+        String[] arrOfStr = dateTime.split(" ", 2);
+        ArrayList<String> dateAndTime = new ArrayList<>(Arrays.asList(arrOfStr));
+
+        // convert date to dd/mm/yyyy
+        Date dateObj = null;
+        try {
+            dateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dateAndTime.get(0));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String outputDate = new SimpleDateFormat("dd MMM yyyy").format(dateObj);
+        Log.d(TAG, "date: " + outputDate);
+
+        // convert time to 12 hr format
+        Date timeObj = null;
+        try {
+            timeObj = new SimpleDateFormat("H:mm:ss").parse(dateAndTime.get(1));
+        } catch (final ParseException e) {
+            e.printStackTrace();
+        }
+        String outputTime = new SimpleDateFormat("hh:mm a").format(timeObj);
+        Log.d(TAG, "time: " + outputTime);
+
+        return outputDate + " at " + outputTime;
     }
 
     public final boolean hasInternet(Context context) {
