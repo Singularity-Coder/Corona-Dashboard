@@ -7,7 +7,7 @@ import retrofit2.http.Path;
 public interface ApiEndPoints {
 
     @GET("/{ver}/{dis}/{qty}")
-    Single<CoronaStatisticItem> getCoronaStatistics(
+    Single<CoronaResponse> getCoronaStatistics(
             @Path("ver") String version,
             @Path("dis") String disease,
             @Path(value = "qty", encoded = true) String quantity

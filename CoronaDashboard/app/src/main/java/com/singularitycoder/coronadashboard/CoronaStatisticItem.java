@@ -5,19 +5,16 @@ public final class CoronaStatisticItem {
     private String statisticName;
     private String statisticValue;
 
+    public CoronaStatisticItem(String statisticName, String statisticValue) {
+        this.statisticName = statisticName;
+        this.statisticValue = statisticValue;
+    }
+
     public String getStatisticName() {
         return statisticName;
     }
 
-    public void setStatisticName(String statisticName) {
-        this.statisticName = statisticName;
-    }
-
     public String getStatisticValue() {
         return statisticValue;
-    }
-
-    public void setStatisticValue(String statisticValue) {
-        this.statisticValue = statisticValue;
     }
 }
