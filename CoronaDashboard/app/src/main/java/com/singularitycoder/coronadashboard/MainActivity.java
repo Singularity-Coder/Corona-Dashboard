@@ -190,7 +190,7 @@ public final class MainActivity extends AppCompatActivity {
                             coronaStatisticList.add(new CoronaStatisticItem("Deaths Per One Million", roundOffNumber(valueOf((int) coronaResponse.getDeathsPerOneMillion()))));
                             coronaStatisticList.add(new CoronaStatisticItem("Total Tests", roundOffNumber(valueOf((int) coronaResponse.getTests()))));
                             coronaStatisticList.add(new CoronaStatisticItem("Tests Per One Million", roundOffNumber(valueOf((int) coronaResponse.getTestsPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Total Population", roundOffNumber(valueOf((int) coronaResponse.getPopulation()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Total Population", roundOffNumber(valueOf(Math.round(coronaResponse.getPopulation())))));
                             coronaStatisticList.add(new CoronaStatisticItem("One Case Per People", roundOffNumber(valueOf((int) coronaResponse.getOneCasePerPeople()))));
                             coronaStatisticList.add(new CoronaStatisticItem("One Death Per People", roundOffNumber(valueOf((int) coronaResponse.getOneDeathPerPeople()))));
                             coronaStatisticList.add(new CoronaStatisticItem("One Test Per People", roundOffNumber(valueOf((int) coronaResponse.getOneTestPerPeople()))));
@@ -261,11 +261,11 @@ public final class MainActivity extends AppCompatActivity {
 
         // Million
         else if (resultString.length() == 7) {
-            return resultString.charAt(0) + "M";
+            return resultString.charAt(0) + "." + resultString.charAt(1) + "M";
         }
 
          else if (resultString.length() == 8) {
-            return resultString.charAt(0) + "" + resultString.charAt(1) + "M";
+            return resultString.charAt(0) + "" + resultString.charAt(1) + "." + resultString.charAt(2) + "M";
         }
 
         else if (resultString.length() == 9) {
@@ -274,12 +274,12 @@ public final class MainActivity extends AppCompatActivity {
 
         // Billion
         else if (resultString.length() == 10) {
-            String billionResult = valueOf(Math.round(Math.floor(Double.parseDouble(resultString))));
-            return billionResult.charAt(0) + "B";
+//            String billionResult = valueOf(Math.round(Math.floor(Double.parseDouble(resultString))));
+            return resultString.charAt(0) + "." + resultString.charAt(1) + "B";
         }
 
         else if (resultString.length() == 11) {
-            return resultString.charAt(0) + "" + resultString.charAt(1) + "B";
+            return resultString.charAt(0) + "" + resultString.charAt(1) + "." + resultString.charAt(2) + "B";
         }
 
         else if (resultString.length() == 12) {
