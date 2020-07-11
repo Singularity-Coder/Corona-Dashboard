@@ -178,26 +178,26 @@ public final class MainActivity extends AppCompatActivity {
                             CoronaResponse coronaResponse = (CoronaResponse) requestStateMediator.getData();
 
                             coronaStatisticList.add(new CoronaStatisticItem("Updated On", valueOf(getDateTime(new Date((long) coronaResponse.getUpdated())))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Cases", roundOffNumber(valueOf(coronaResponse.getCases()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Cases Today", roundOffNumber(valueOf(coronaResponse.getTodayCases()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Deaths", roundOffNumber(valueOf(coronaResponse.getDeaths()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Today", roundOffNumber(valueOf(coronaResponse.getTodayDeaths()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Recovered", roundOffNumber(valueOf(coronaResponse.getRecovered()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Today", roundOffNumber(valueOf(coronaResponse.getTodayRecovered()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Active", roundOffNumber(valueOf(coronaResponse.getActive()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Critical", roundOffNumber(valueOf(coronaResponse.getCritical()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Cases Per One Million", roundOffNumber(valueOf(coronaResponse.getCasesPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Per One Million", roundOffNumber(valueOf(coronaResponse.getDeathsPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Total Tests", roundOffNumber(valueOf(coronaResponse.getTests()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Tests Per One Million", roundOffNumber(valueOf(coronaResponse.getTestsPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Total Population", roundOffNumber(valueOf(coronaResponse.getPopulation()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("One Case Per People", roundOffNumber(valueOf(coronaResponse.getOneCasePerPeople()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("One Death Per People", roundOffNumber(valueOf(coronaResponse.getOneDeathPerPeople()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("One Test Per People", roundOffNumber(valueOf(coronaResponse.getOneTestPerPeople()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Active Per One Million", roundOffNumber(valueOf(coronaResponse.getActivePerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Per One Million", roundOffNumber(valueOf(coronaResponse.getRecoveredPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Critical Per One Million", roundOffNumber(valueOf(coronaResponse.getCriticalPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Affected Countries", roundOffNumber(valueOf(coronaResponse.getAffectedCountries()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Cases", roundOffNumber(valueOf((int) coronaResponse.getCases()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Cases Today", roundOffNumber(valueOf((int) coronaResponse.getTodayCases()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Deaths", roundOffNumber(valueOf((int) coronaResponse.getDeaths()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Today", roundOffNumber(valueOf((int) coronaResponse.getTodayDeaths()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Recovered", roundOffNumber(valueOf((int) coronaResponse.getRecovered()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Today", roundOffNumber(valueOf((int) coronaResponse.getTodayRecovered()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Active", roundOffNumber(valueOf((int) coronaResponse.getActive()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Critical", roundOffNumber(valueOf((int) coronaResponse.getCritical()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Cases Per One Million", roundOffNumber(valueOf((int) coronaResponse.getCasesPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Per One Million", roundOffNumber(valueOf((int) coronaResponse.getDeathsPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Total Tests", roundOffNumber(valueOf((int) coronaResponse.getTests()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Tests Per One Million", roundOffNumber(valueOf((int) coronaResponse.getTestsPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Total Population", roundOffNumber(valueOf((int) coronaResponse.getPopulation()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("One Case Per People", roundOffNumber(valueOf((int) coronaResponse.getOneCasePerPeople()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("One Death Per People", roundOffNumber(valueOf((int) coronaResponse.getOneDeathPerPeople()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("One Test Per People", roundOffNumber(valueOf((int) coronaResponse.getOneTestPerPeople()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Active Per One Million", roundOffNumber(valueOf((int) coronaResponse.getActivePerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Per One Million", roundOffNumber(valueOf((int) coronaResponse.getRecoveredPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Critical Per One Million", roundOffNumber(valueOf((int) coronaResponse.getCriticalPerOneMillion()))));
+                            coronaStatisticList.add(new CoronaStatisticItem("Affected Countries", roundOffNumber(valueOf((int) coronaResponse.getAffectedCountries()))));
 
                             coronaStatisticsAdapter.notifyDataSetChanged();
                             binding.swipeRefreshLayout.setRefreshing(false);
@@ -238,24 +238,25 @@ public final class MainActivity extends AppCompatActivity {
         return observer;
     }
 
-    private String roundOffNumber(String number) {
+    private String roundOffNumber(String resultString) {
 //        double result = (double) Math.round(number * 100)/100;
-        double result = (double) Math.round(Double.parseDouble(number));
-        String resultString = valueOf(result);
+//        double result = (double) Math.round(Double.parseDouble(number));
+//        int resultInt = (int) result;
+//        String resultString = valueOf(resultInt);
 
-        Log.d(TAG, "roundOffNumber: " + number);
+        Log.d(TAG, "roundOffNumber: " + resultString);
 
         // Thousand
         if (resultString.length() == 4) {
-            return resultString.charAt(0) + "K";
+            return resultString.charAt(0) + "." + resultString.charAt(1) + "K";
         }
 
          else if (resultString.length() == 5) {
-            return resultString.charAt(0) + resultString.charAt(1) + "K";
+            return resultString.charAt(0) + "" + resultString.charAt(1) + "." + resultString.charAt(2) + "K";
         }
 
         else if (resultString.length() == 6) {
-            return resultString.charAt(0) + resultString.charAt(1) + resultString.charAt(2) + "K";
+            return resultString.charAt(0) + "" + resultString.charAt(1) + "" + resultString.charAt(2) + "K";
         }
 
         // Million
@@ -263,12 +264,12 @@ public final class MainActivity extends AppCompatActivity {
             return resultString.charAt(0) + "M";
         }
 
-        else if (resultString.length() == 8) {
-            return resultString.charAt(0) + resultString.charAt(1) + "M";
+         else if (resultString.length() == 8) {
+            return resultString.charAt(0) + "" + resultString.charAt(1) + "M";
         }
 
         else if (resultString.length() == 9) {
-            return resultString.charAt(0) + resultString.charAt(1) + resultString.charAt(2) + "M";
+            return resultString.charAt(0) + "" + resultString.charAt(1) + "" + resultString.charAt(2) + "M";
         }
 
         // Billion
@@ -278,11 +279,11 @@ public final class MainActivity extends AppCompatActivity {
         }
 
         else if (resultString.length() == 11) {
-            return resultString.charAt(0) + resultString.charAt(1) + "B";
+            return resultString.charAt(0) + "" + resultString.charAt(1) + "B";
         }
 
         else if (resultString.length() == 12) {
-            return resultString.charAt(0) + resultString.charAt(1) + resultString.charAt(2) + "B";
+            return resultString.charAt(0) + "" + resultString.charAt(1) + "" + resultString.charAt(2) + "B";
         }
 
         // Trillion
