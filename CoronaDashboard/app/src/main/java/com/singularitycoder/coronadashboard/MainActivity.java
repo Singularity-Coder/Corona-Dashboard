@@ -35,6 +35,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.test.espresso.IdlingResource;
 
 import com.singularitycoder.coronadashboard.databinding.ActivityMainBinding;
@@ -125,8 +126,8 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
-//        RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(this);
+//        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
+        RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         binding.recyclerNews.setLayoutManager(layoutManager);
         coronaStatisticsAdapter = new CoronaStatisticsAdapter(coronaStatisticList, this);
         binding.recyclerNews.setAdapter(coronaStatisticsAdapter);
