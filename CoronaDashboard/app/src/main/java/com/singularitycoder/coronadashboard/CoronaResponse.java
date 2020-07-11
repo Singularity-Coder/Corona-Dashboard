@@ -7,169 +7,169 @@ class CoronaResponse {
 
     @SerializedName("updated")
     @Expose(serialize = true, deserialize = true)
-    private long updated;
+    private double updated;
 
     @SerializedName("cases")
     @Expose(serialize = true, deserialize = true)
-    private long cases;
+    private double cases;
 
     @SerializedName("todayCases")
     @Expose(serialize = true, deserialize = true)
-    private long todayCases;
+    private double todayCases;
 
     @SerializedName("deaths")
     @Expose(serialize = true, deserialize = true)
-    private long deaths;
+    private double deaths;
 
     @SerializedName("todayDeaths")
     @Expose(serialize = true, deserialize = true)
-    private long todayDeaths;
+    private double todayDeaths;
 
     @SerializedName("recovered")
     @Expose(serialize = true, deserialize = true)
-    private long recovered;
+    private double recovered;
 
     @SerializedName("todayRecovered")
     @Expose(serialize = true, deserialize = true)
-    private long todayRecovered;
+    private double todayRecovered;
 
     @SerializedName("active")
     @Expose(serialize = true, deserialize = true)
-    private long active;
+    private double active;
 
     @SerializedName("critical")
     @Expose(serialize = true, deserialize = true)
-    private long critical;
+    private double critical;
 
     @SerializedName("casesPerOneMillion")
     @Expose(serialize = true, deserialize = true)
-    private long casesPerOneMillion;
+    private double casesPerOneMillion;
 
     @SerializedName("deathsPerOneMillion")
     @Expose(serialize = true, deserialize = true)
-    private long deathsPerOneMillion;
+    private double deathsPerOneMillion;
 
     @SerializedName("tests")
     @Expose(serialize = true, deserialize = true)
-    private long tests;
+    private double tests;
 
     @SerializedName("testsPerOneMillion")
     @Expose(serialize = true, deserialize = true)
-    private long testsPerOneMillion;
+    private double testsPerOneMillion;
 
     @SerializedName("population")
     @Expose(serialize = true, deserialize = true)
-    private long population;
+    private double population;
 
     @SerializedName("oneCasePerPeople")
     @Expose(serialize = true, deserialize = true)
-    private long oneCasePerPeople;
+    private double oneCasePerPeople;
 
     @SerializedName("oneDeathPerPeople")
     @Expose(serialize = true, deserialize = true)
-    private long oneDeathPerPeople;
+    private double oneDeathPerPeople;
 
     @SerializedName("oneTestPerPeople")
     @Expose(serialize = true, deserialize = true)
-    private long oneTestPerPeople;
+    private double oneTestPerPeople;
 
     @SerializedName("activePerOneMillion")
     @Expose(serialize = true, deserialize = true)
-    private long activePerOneMillion;
+    private double activePerOneMillion;
 
     @SerializedName("recoveredPerOneMillion")
     @Expose(serialize = true, deserialize = true)
-    private long recoveredPerOneMillion;
+    private double recoveredPerOneMillion;
 
     @SerializedName("criticalPerOneMillion")
     @Expose(serialize = true, deserialize = true)
-    private long criticalPerOneMillion;
+    private double criticalPerOneMillion;
 
     @SerializedName("affectedCountries")
     @Expose(serialize = true, deserialize = true)
-    private long affectedCountries;
+    private double affectedCountries;
 
-    public long getUpdated() {
+    public double getUpdated() {
         return updated;
     }
 
-    public long getCases() {
+    public double getCases() {
         return cases;
     }
 
-    public long getTodayCases() {
+    public double getTodayCases() {
         return todayCases;
     }
 
-    public long getDeaths() {
+    public double getDeaths() {
         return deaths;
     }
 
-    public long getTodayDeaths() {
+    public double getTodayDeaths() {
         return todayDeaths;
     }
 
-    public long getRecovered() {
+    public double getRecovered() {
         return recovered;
     }
 
-    public long getTodayRecovered() {
+    public double getTodayRecovered() {
         return todayRecovered;
     }
 
-    public long getActive() {
+    public double getActive() {
         return active;
     }
 
-    public long getCritical() {
+    public double getCritical() {
         return critical;
     }
 
-    public long getCasesPerOneMillion() {
+    public double getCasesPerOneMillion() {
         return casesPerOneMillion;
     }
 
-    public long getDeathsPerOneMillion() {
+    public double getDeathsPerOneMillion() {
         return deathsPerOneMillion;
     }
 
-    public long getTests() {
+    public double getTests() {
         return tests;
     }
 
-    public long getTestsPerOneMillion() {
+    public double getTestsPerOneMillion() {
         return testsPerOneMillion;
     }
 
-    public long getPopulation() {
+    public double getPopulation() {
         return population;
     }
 
-    public long getOneCasePerPeople() {
+    public double getOneCasePerPeople() {
         return oneCasePerPeople;
     }
 
-    public long getOneDeathPerPeople() {
+    public double getOneDeathPerPeople() {
         return oneDeathPerPeople;
     }
 
-    public long getOneTestPerPeople() {
+    public double getOneTestPerPeople() {
         return oneTestPerPeople;
     }
 
-    public long getActivePerOneMillion() {
+    public double getActivePerOneMillion() {
         return activePerOneMillion;
     }
 
-    public long getRecoveredPerOneMillion() {
+    public double getRecoveredPerOneMillion() {
         return recoveredPerOneMillion;
     }
 
-    public long getCriticalPerOneMillion() {
+    public double getCriticalPerOneMillion() {
         return criticalPerOneMillion;
     }
 
-    public long getAffectedCountries() {
+    public double getAffectedCountries() {
         return affectedCountries;
     }
 }
