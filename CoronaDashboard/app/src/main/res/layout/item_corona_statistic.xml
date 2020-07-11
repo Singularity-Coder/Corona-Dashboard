@@ -5,14 +5,12 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
     android:layout_marginEnd="8dp"
-    android:clipChildren="true"
-    android:clipToPadding="true"
-    app:cardBackgroundColor="@color/colorPrimary"
     app:cardCornerRadius="6dp"
-    app:cardElevation="8dp">
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
         android:layout_height="wrap_content"
         android:padding="16dp">
 

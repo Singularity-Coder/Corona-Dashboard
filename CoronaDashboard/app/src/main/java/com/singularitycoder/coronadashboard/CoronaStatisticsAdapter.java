@@ -64,6 +64,11 @@ public final class CoronaStatisticsAdapter extends RecyclerView.Adapter<Recycler
         return position;
     }
 
+    public void filterList(List<CoronaStatisticItem> list) {
+        this.statisticList = list;
+        notifyDataSetChanged();
+    }
+
     public interface StatisticViewListener {
         void onStatisticItemClicked(int position);
     }

@@ -5,20 +5,31 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -217,6 +228,53 @@ public final class MainActivity extends AppCompatActivity {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         assert cm != null;
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    @SuppressLint("WrongConstant")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_statistics, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_statistics_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+//        searchView.setQueryHint("Search Statistics");
+        searchView.setQueryHint(HtmlCompat.fromHtml("<font color = #000000>" + "Search Statistics" + "</font>", Html.FROM_HTML_MODE_LEGACY));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchUsers(newText);
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_statistics_search:
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void searchUsers(String text) {
+        List<CoronaStatisticItem> filteredList = new ArrayList<>();
+        for (CoronaStatisticItem item : coronaStatisticList) {
+            if (item.getStatisticName().toLowerCase().trim().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        coronaStatisticsAdapter.filterList(filteredList);
+        coronaStatisticsAdapter.notifyDataSetChanged();
     }
 
     @Override
