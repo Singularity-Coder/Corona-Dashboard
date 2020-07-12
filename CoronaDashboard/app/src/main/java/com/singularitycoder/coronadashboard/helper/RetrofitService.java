@@ -1,4 +1,4 @@
-package com.singularitycoder.coronadashboard;
+package com.singularitycoder.coronadashboard.helper;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 

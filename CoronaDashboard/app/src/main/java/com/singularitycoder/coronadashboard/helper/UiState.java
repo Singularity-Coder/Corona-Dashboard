@@ -1,4 +1,4 @@
-package com.singularitycoder.coronadashboard;
+package com.singularitycoder.coronadashboard.helper;
 
 public enum UiState {
     LOADING,

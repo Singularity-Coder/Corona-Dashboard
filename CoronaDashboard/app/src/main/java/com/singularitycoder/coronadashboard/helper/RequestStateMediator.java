@@ -1,4 +1,4 @@
-package com.singularitycoder.coronadashboard;
+package com.singularitycoder.coronadashboard.helper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

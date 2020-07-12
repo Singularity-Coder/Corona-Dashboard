@@ -1,4 +1,4 @@
-package com.singularitycoder.coronadashboard;
+package com.singularitycoder.coronadashboard.viewmodel;
 
 import android.util.Log;
 
@@ -7,6 +7,11 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.singularitycoder.coronadashboard.helper.ApiIdlingResource;
+import com.singularitycoder.coronadashboard.helper.RequestStateMediator;
+import com.singularitycoder.coronadashboard.helper.UiState;
+import com.singularitycoder.coronadashboard.repository.CoronaStatisticsRepository;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;

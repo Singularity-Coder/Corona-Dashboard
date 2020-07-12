@@ -1,4 +1,6 @@
-package com.singularitycoder.coronadashboard;
+package com.singularitycoder.coronadashboard.helper;
+
+import com.singularitycoder.coronadashboard.model.CoronaResponse;
 
 import io.reactivex.Single;
 import retrofit2.http.GET;

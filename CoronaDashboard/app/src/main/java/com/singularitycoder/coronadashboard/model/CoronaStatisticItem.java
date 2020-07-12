@@ -1,4 +1,4 @@
-package com.singularitycoder.coronadashboard;
+package com.singularitycoder.coronadashboard.model;
 
 public final class CoronaStatisticItem {
 

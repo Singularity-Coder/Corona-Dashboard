@@ -133,4 +133,7 @@ dependencies {
     implementation 'com.google.dagger:dagger-android-support:2.23.2'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.24'
 
+    // Graphs
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
 }

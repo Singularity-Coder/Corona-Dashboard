@@ -1,7 +1,11 @@
-package com.singularitycoder.coronadashboard;
+package com.singularitycoder.coronadashboard.repository;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.singularitycoder.coronadashboard.helper.ApiEndPoints;
+import com.singularitycoder.coronadashboard.helper.RetrofitService;
+import com.singularitycoder.coronadashboard.model.CoronaResponse;
 
 import io.reactivex.Single;
 

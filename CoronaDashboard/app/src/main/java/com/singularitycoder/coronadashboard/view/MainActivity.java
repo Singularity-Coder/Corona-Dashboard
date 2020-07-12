@@ -1,17 +1,14 @@
-package com.singularitycoder.coronadashboard;
+package com.singularitycoder.coronadashboard.view;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +16,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,17 +24,23 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.test.espresso.IdlingResource;
 
+import com.singularitycoder.coronadashboard.R;
+import com.singularitycoder.coronadashboard.adapter.CoronaStatisticsAdapter;
 import com.singularitycoder.coronadashboard.databinding.ActivityMainBinding;
+import com.singularitycoder.coronadashboard.helper.ApiIdlingResource;
+import com.singularitycoder.coronadashboard.helper.RequestStateMediator;
+import com.singularitycoder.coronadashboard.helper.UiState;
+import com.singularitycoder.coronadashboard.model.CoronaResponse;
+import com.singularitycoder.coronadashboard.model.CoronaStatisticItem;
+import com.singularitycoder.coronadashboard.viewmodel.CoronaStatisticsViewModel;
 
 import java.text.DateFormat;
 import java.text.ParseException;
