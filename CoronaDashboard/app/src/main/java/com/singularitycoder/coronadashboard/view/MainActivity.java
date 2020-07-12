@@ -179,6 +179,9 @@ public final class MainActivity extends AppCompatActivity {
                             coronaStatisticList.clear();
                             CoronaResponse coronaResponse = (CoronaResponse) requestStateMediator.getData();
 
+                            // Add to Room DB
+                            coronaStatisticsViewModel.insertIntoRoomDbFromRepository(coronaResponse);
+
                             coronaStatisticList.add(new CoronaStatisticItem("Updated On", valueOf(getDateTime(new Date((long) coronaResponse.getUpdated())))));
                             coronaStatisticList.add(new CoronaStatisticItem("Cases", roundOffNumber(valueOf((int) coronaResponse.getCases()))));
                             coronaStatisticList.add(new CoronaStatisticItem("Cases Today", roundOffNumber(valueOf((int) coronaResponse.getTodayCases()))));

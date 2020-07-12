@@ -1,16 +1,18 @@
 package com.singularitycoder.coronadashboard.viewmodel;
 
+import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.singularitycoder.coronadashboard.helper.ApiIdlingResource;
 import com.singularitycoder.coronadashboard.helper.RequestStateMediator;
 import com.singularitycoder.coronadashboard.helper.UiState;
+import com.singularitycoder.coronadashboard.model.CoronaResponse;
 import com.singularitycoder.coronadashboard.repository.CoronaStatisticsRepository;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -18,7 +20,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public final class CoronaStatisticsViewModel extends ViewModel {
+public final class CoronaStatisticsViewModel extends AndroidViewModel {
 
     @NonNull
     private static final String TAG = "CoronaStatisticsViewMod";
@@ -28,6 +30,32 @@ public final class CoronaStatisticsViewModel extends ViewModel {
 
     @NonNull
     private CoronaStatisticsRepository coronaStatisticsRepository = CoronaStatisticsRepository.getInstance();
+
+    public CoronaStatisticsViewModel(@NonNull Application application) {
+        super(application);
+        coronaStatisticsRepository = new CoronaStatisticsRepository(application);
+    }
+
+    // ROOM START______________________________________________________________
+
+    public final void insertIntoRoomDbFromRepository(CoronaResponse coronaResponse) {
+        coronaStatisticsRepository.insertIntoRoomDb(coronaResponse);
+    }
+
+    public final void updateInRoomDbFromRepository(CoronaResponse coronaResponse) {
+        coronaStatisticsRepository.updateInRoomDb(coronaResponse);
+    }
+
+    public final void deleteFromRoomDbFromRepository(CoronaResponse coronaResponse) {
+        coronaStatisticsRepository.deleteFromRoomDb(coronaResponse);
+    }
+
+    public final void deleteAllFromRoomDbFromRepository() {
+        coronaStatisticsRepository.deleteAllFromRoomDb();
+    }
+
+    // ROOM END______________________________________________________________
+
 
     public final LiveData<RequestStateMediator<Object, UiState, String, String>> getCoronaStatisticsFromRepository(
             @Nullable final String version,
