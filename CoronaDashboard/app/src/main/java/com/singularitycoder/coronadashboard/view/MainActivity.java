@@ -133,11 +133,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void showLoading() {
-        if (null != progressDialog && !progressDialog.isShowing()) progressDialog.show();
+        binding.swipeRefreshLayout.setRefreshing(true);
     }
 
     private void hideLoading() {
-        if (null != progressDialog && progressDialog.isShowing()) progressDialog.dismiss();
+        binding.swipeRefreshLayout.setRefreshing(false);
     }
 
     private Observer<StateMediator<Object, UiState, String, String>> liveDataObserver() {
