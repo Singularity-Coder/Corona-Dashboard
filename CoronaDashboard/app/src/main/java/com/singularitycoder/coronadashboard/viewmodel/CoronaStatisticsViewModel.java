@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.singularitycoder.coronadashboard.helper.ApiIdlingResource;
-import com.singularitycoder.coronadashboard.helper.RequestStateMediator;
+import com.singularitycoder.coronadashboard.helper.StateMediator;
 import com.singularitycoder.coronadashboard.helper.UiState;
 import com.singularitycoder.coronadashboard.model.CoronaResponse;
 import com.singularitycoder.coronadashboard.repository.CoronaStatisticsRepository;
@@ -57,7 +57,7 @@ public final class CoronaStatisticsViewModel extends AndroidViewModel {
     // ROOM END______________________________________________________________
 
 
-    public final LiveData<RequestStateMediator<Object, UiState, String, String>> getCoronaStatisticsFromRepository(
+    public final LiveData<StateMediator<Object, UiState, String, String>> getCoronaStatisticsFromRepository(
             @Nullable final String version,
             @NonNull final String disease,
             @NonNull final String quantity,
@@ -65,11 +65,11 @@ public final class CoronaStatisticsViewModel extends AndroidViewModel {
 
         if (null != idlingResource) idlingResource.setIdleState(false);
 
-        final RequestStateMediator<Object, UiState, String, String> requestStateMediator = new RequestStateMediator<>();
-        final MutableLiveData<RequestStateMediator<Object, UiState, String, String>> mutableLiveData = new MutableLiveData<>();
+        final StateMediator<Object, UiState, String, String> stateMediator = new StateMediator<>();
+        final MutableLiveData<StateMediator<Object, UiState, String, String>> mutableLiveData = new MutableLiveData<>();
 
-        requestStateMediator.set(null, UiState.LOADING, "Loading...", null);
-        mutableLiveData.postValue(requestStateMediator);
+        stateMediator.set(null, UiState.LOADING, "Loading...", null);
+        mutableLiveData.postValue(stateMediator);
 
         compositeDisposable.add(
                 coronaStatisticsRepository.getCoronaStatisticsFromApi(version, disease, quantity)
@@ -80,16 +80,16 @@ public final class CoronaStatisticsViewModel extends AndroidViewModel {
                             public void onSuccess(Object o) {
                                 Log.d(TAG, "onResponse: resp: " + o);
                                 if (null != o) {
-                                    requestStateMediator.set(o, UiState.SUCCESS, "Got Data!", "STATISTICS");
-                                    mutableLiveData.postValue(requestStateMediator);
+                                    stateMediator.set(o, UiState.SUCCESS, "Got Data!", "STATISTICS");
+                                    mutableLiveData.postValue(stateMediator);
                                     if (null != idlingResource) idlingResource.setIdleState(true);
                                 }
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                requestStateMediator.set(null, UiState.ERROR, e.getMessage(), null);
-                                mutableLiveData.postValue(requestStateMediator);
+                                stateMediator.set(null, UiState.ERROR, e.getMessage(), null);
+                                mutableLiveData.postValue(stateMediator);
                                 if (null != idlingResource) idlingResource.setIdleState(true);
                             }
                         })

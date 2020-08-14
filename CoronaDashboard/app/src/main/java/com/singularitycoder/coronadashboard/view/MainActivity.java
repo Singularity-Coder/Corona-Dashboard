@@ -1,20 +1,13 @@
 package com.singularitycoder.coronadashboard.view;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
@@ -23,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,20 +28,16 @@ import com.singularitycoder.coronadashboard.R;
 import com.singularitycoder.coronadashboard.adapter.CoronaStatisticsAdapter;
 import com.singularitycoder.coronadashboard.databinding.ActivityMainBinding;
 import com.singularitycoder.coronadashboard.helper.ApiIdlingResource;
-import com.singularitycoder.coronadashboard.helper.RequestStateMediator;
+import com.singularitycoder.coronadashboard.helper.AppUtils;
+import com.singularitycoder.coronadashboard.helper.StateMediator;
 import com.singularitycoder.coronadashboard.helper.UiState;
 import com.singularitycoder.coronadashboard.model.CoronaResponse;
 import com.singularitycoder.coronadashboard.model.CoronaStatisticItem;
 import com.singularitycoder.coronadashboard.viewmodel.CoronaStatisticsViewModel;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -78,13 +66,16 @@ public final class MainActivity extends AppCompatActivity {
     @Nullable
     private CoronaStatisticsAdapter coronaStatisticsAdapter;
 
+    @NonNull
+    private AppUtils appUtils = AppUtils.getInstance();
+
     @Nullable
     private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStatusBarColor(this, R.color.colorPrimary);
+        appUtils.setStatusBarColor(this, R.color.colorPrimary);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         initialise();
@@ -101,20 +92,6 @@ public final class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: " + "HelloWorld".length());
     }
 
-    @SuppressLint("SourceLockedOrientationActivity")
-    public final void setStatusBarColor(Activity activity, int statusBarColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = activity.getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(activity, statusBarColor));
-            window.requestFeature(window.FEATURE_NO_TITLE);
-            window.requestFeature(Window.FEATURE_PROGRESS);
-            window.setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-    }
-
     private void initialise() {
         progressDialog = new ProgressDialog(this);
         coronaStatisticsViewModel = new ViewModelProvider(this).get(CoronaStatisticsViewModel.class);
@@ -128,8 +105,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-//        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
-        RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        final RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         binding.recyclerNews.setLayoutManager(layoutManager);
         coronaStatisticsAdapter = new CoronaStatisticsAdapter(coronaStatisticList, this);
         binding.recyclerNews.setAdapter(coronaStatisticsAdapter);
@@ -137,110 +113,121 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void getCoronaData() {
-        if (hasInternet(this)) {
-            coronaStatisticsViewModel.getCoronaStatisticsFromRepository(
-                    "v3",
-                    "covid-19",
-                    "all",
-                    idlingResource
-            ).observe(MainActivity.this, liveDataObserver());
-        } else {
-            binding.tvNoInternet.setVisibility(View.VISIBLE);
-            binding.swipeRefreshLayout.setRefreshing(false);
-            coronaStatisticList.clear();
-        }
+        if (appUtils.hasInternet(this)) showOnlineState();
+        else showOfflineState();
     }
 
-    private void showProgress() {
+    private void showOnlineState() {
+        coronaStatisticsViewModel.getCoronaStatisticsFromRepository(
+                "v3",
+                "covid-19",
+                "all",
+                idlingResource
+        ).observe(MainActivity.this, liveDataObserver());
+    }
+
+    private void showOfflineState() {
+        binding.tvNoInternet.setVisibility(View.VISIBLE);
+        binding.swipeRefreshLayout.setRefreshing(false);
+        coronaStatisticList.clear();
+    }
+
+    private void showLoading() {
         if (null != progressDialog && !progressDialog.isShowing()) progressDialog.show();
     }
 
-    private void hideProgress() {
+    private void hideLoading() {
         if (null != progressDialog && progressDialog.isShowing()) progressDialog.dismiss();
     }
 
-    private Observer<RequestStateMediator<Object, UiState, String, String>> liveDataObserver() {
-        Observer<RequestStateMediator<Object, UiState, String, String>> observer = null;
-        if (hasInternet(this)) {
-            observer = requestStateMediator -> {
+    private Observer<StateMediator<Object, UiState, String, String>> liveDataObserver() {
+        Observer<StateMediator<Object, UiState, String, String>> observer = null;
+        observer = stateMediator -> {
 
-                if (UiState.LOADING == requestStateMediator.getStatus()) {
-                    runOnUiThread(() -> {
-                        progressDialog.setMessage(valueOf(requestStateMediator.getMessage()));
-                        progressDialog.setCancelable(false);
-                        progressDialog.setCanceledOnTouchOutside(false);
-                        showProgress();
-                    });
-                }
+            if (UiState.LOADING == stateMediator.getStatus()) showLoadingState(stateMediator);
 
-                if (UiState.SUCCESS == requestStateMediator.getStatus()) {
-                    runOnUiThread(() -> {
-                        if (("STATISTICS").equals(requestStateMediator.getKey())) {
-                            coronaStatisticList.clear();
-                            CoronaResponse coronaResponse = (CoronaResponse) requestStateMediator.getData();
+            if (UiState.SUCCESS == stateMediator.getStatus()) showSuccessState(stateMediator);
 
-                            // Add to Room DB
-                            coronaStatisticsViewModel.insertIntoRoomDbFromRepository(coronaResponse);
+            if (UiState.EMPTY == stateMediator.getStatus()) showEmptyState(stateMediator);
 
-                            coronaStatisticList.add(new CoronaStatisticItem("Updated On", valueOf(getDateTime(new Date((long) coronaResponse.getUpdated())))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Cases", roundOffNumber(valueOf((int) coronaResponse.getCases()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Cases Today", roundOffNumber(valueOf((int) coronaResponse.getTodayCases()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Deaths", roundOffNumber(valueOf((int) coronaResponse.getDeaths()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Today", roundOffNumber(valueOf((int) coronaResponse.getTodayDeaths()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Recovered", roundOffNumber(valueOf((int) coronaResponse.getRecovered()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Today", roundOffNumber(valueOf((int) coronaResponse.getTodayRecovered()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Active", roundOffNumber(valueOf((int) coronaResponse.getActive()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Critical", roundOffNumber(valueOf((int) coronaResponse.getCritical()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Cases Per One Million", roundOffNumber(valueOf((int) coronaResponse.getCasesPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Deaths Per One Million", roundOffNumber(valueOf((int) coronaResponse.getDeathsPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Total Tests", roundOffNumber(valueOf((int) coronaResponse.getTests()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Tests Per One Million", roundOffNumber(valueOf((int) coronaResponse.getTestsPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Total Population", roundOffNumber(valueOf(Math.round(coronaResponse.getPopulation())))));
-                            coronaStatisticList.add(new CoronaStatisticItem("One Case Per People", roundOffNumber(valueOf((int) coronaResponse.getOneCasePerPeople()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("One Death Per People", roundOffNumber(valueOf((int) coronaResponse.getOneDeathPerPeople()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("One Test Per People", roundOffNumber(valueOf((int) coronaResponse.getOneTestPerPeople()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Active Per One Million", roundOffNumber(valueOf((int) coronaResponse.getActivePerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Recovered Per One Million", roundOffNumber(valueOf((int) coronaResponse.getRecoveredPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Critical Per One Million", roundOffNumber(valueOf((int) coronaResponse.getCriticalPerOneMillion()))));
-                            coronaStatisticList.add(new CoronaStatisticItem("Affected Countries", roundOffNumber(valueOf((int) coronaResponse.getAffectedCountries()))));
-
-                            coronaStatisticsAdapter.notifyDataSetChanged();
-                            binding.swipeRefreshLayout.setRefreshing(false);
-
-                            Toast.makeText(MainActivity.this, valueOf(requestStateMediator.getData()), Toast.LENGTH_SHORT).show();
-                            hideProgress();
-                            binding.tvNoInternet.setVisibility(View.GONE);
-                        }
-                    });
-                }
-
-                if (UiState.EMPTY == requestStateMediator.getStatus()) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(MainActivity.this, "Something is wrong!", Toast.LENGTH_SHORT).show();
-                        binding.swipeRefreshLayout.setRefreshing(false);
-                        binding.progressCircular.setVisibility(View.GONE);
-                        binding.tvNothing.setVisibility(View.VISIBLE);
-                        binding.tvNothing.setText("Nothing to show :(");
-                        hideProgress();
-                        binding.tvNoInternet.setVisibility(View.GONE);
-                        Toast.makeText(this, valueOf(requestStateMediator.getMessage()), Toast.LENGTH_LONG).show();
-                    });
-                }
-
-                if (UiState.ERROR == requestStateMediator.getStatus()) {
-                    runOnUiThread(() -> {
-                        binding.progressCircular.setVisibility(View.GONE);
-                        binding.tvNothing.setVisibility(View.GONE);
-                        binding.swipeRefreshLayout.setRefreshing(false);
-                        hideProgress();
-                        binding.tvNoInternet.setVisibility(View.GONE);
-                        Toast.makeText(this, valueOf(requestStateMediator.getMessage()), Toast.LENGTH_LONG).show();
-                        Log.d(TAG, "liveDataObserver: error: " + requestStateMediator.getMessage());
-                    });
-                }
-            };
-        }
+            if (UiState.ERROR == stateMediator.getStatus()) showErrorState(stateMediator);
+        };
         return observer;
+    }
+
+    private void showLoadingState(StateMediator<Object, UiState, String, String> stateMediator) {
+        runOnUiThread(() -> {
+            progressDialog.setMessage(valueOf(stateMediator.getMessage()));
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
+            showLoading();
+        });
+    }
+
+    private void showSuccessState(StateMediator<Object, UiState, String, String> stateMediator) {
+        runOnUiThread(() -> {
+            if (("STATISTICS").equals(stateMediator.getKey())) {
+                coronaStatisticList.clear();
+                final CoronaResponse coronaResponse = (CoronaResponse) stateMediator.getData();
+
+                // Add to Room DB
+                coronaStatisticsViewModel.insertIntoRoomDbFromRepository(coronaResponse);
+
+                coronaStatisticList.add(new CoronaStatisticItem("Updated On", valueOf(appUtils.getDateTime(new Date((long) coronaResponse.getUpdated())))));
+                coronaStatisticList.add(new CoronaStatisticItem("Cases", roundOffNumber(valueOf((int) coronaResponse.getCases()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Cases Today", roundOffNumber(valueOf((int) coronaResponse.getTodayCases()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Deaths", roundOffNumber(valueOf((int) coronaResponse.getDeaths()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Deaths Today", roundOffNumber(valueOf((int) coronaResponse.getTodayDeaths()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Recovered", roundOffNumber(valueOf((int) coronaResponse.getRecovered()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Recovered Today", roundOffNumber(valueOf((int) coronaResponse.getTodayRecovered()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Active", roundOffNumber(valueOf((int) coronaResponse.getActive()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Critical", roundOffNumber(valueOf((int) coronaResponse.getCritical()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Cases Per One Million", roundOffNumber(valueOf((int) coronaResponse.getCasesPerOneMillion()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Deaths Per One Million", roundOffNumber(valueOf((int) coronaResponse.getDeathsPerOneMillion()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Total Tests", roundOffNumber(valueOf((int) coronaResponse.getTests()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Tests Per One Million", roundOffNumber(valueOf((int) coronaResponse.getTestsPerOneMillion()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Total Population", roundOffNumber(valueOf(Math.round(coronaResponse.getPopulation())))));
+                coronaStatisticList.add(new CoronaStatisticItem("One Case Per People", roundOffNumber(valueOf((int) coronaResponse.getOneCasePerPeople()))));
+                coronaStatisticList.add(new CoronaStatisticItem("One Death Per People", roundOffNumber(valueOf((int) coronaResponse.getOneDeathPerPeople()))));
+                coronaStatisticList.add(new CoronaStatisticItem("One Test Per People", roundOffNumber(valueOf((int) coronaResponse.getOneTestPerPeople()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Active Per One Million", roundOffNumber(valueOf((int) coronaResponse.getActivePerOneMillion()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Recovered Per One Million", roundOffNumber(valueOf((int) coronaResponse.getRecoveredPerOneMillion()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Critical Per One Million", roundOffNumber(valueOf((int) coronaResponse.getCriticalPerOneMillion()))));
+                coronaStatisticList.add(new CoronaStatisticItem("Affected Countries", roundOffNumber(valueOf((int) coronaResponse.getAffectedCountries()))));
+
+                coronaStatisticsAdapter.notifyDataSetChanged();
+                binding.swipeRefreshLayout.setRefreshing(false);
+
+                Toast.makeText(MainActivity.this, valueOf(stateMediator.getData()), Toast.LENGTH_SHORT).show();
+                hideLoading();
+                binding.tvNoInternet.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void showEmptyState(StateMediator<Object, UiState, String, String> stateMediator) {
+        runOnUiThread(() -> {
+            Toast.makeText(MainActivity.this, "Something is wrong!", Toast.LENGTH_SHORT).show();
+            binding.swipeRefreshLayout.setRefreshing(false);
+            binding.progressCircular.setVisibility(View.GONE);
+            binding.tvNothing.setVisibility(View.VISIBLE);
+            binding.tvNothing.setText("Nothing to show :(");
+            hideLoading();
+            binding.tvNoInternet.setVisibility(View.GONE);
+            Toast.makeText(this, valueOf(stateMediator.getMessage()), Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void showErrorState(StateMediator<Object, UiState, String, String> stateMediator) {
+        runOnUiThread(() -> {
+            binding.progressCircular.setVisibility(View.GONE);
+            binding.tvNothing.setVisibility(View.GONE);
+            binding.swipeRefreshLayout.setRefreshing(false);
+            hideLoading();
+            binding.tvNoInternet.setVisibility(View.GONE);
+            Toast.makeText(this, valueOf(stateMediator.getMessage()), Toast.LENGTH_LONG).show();
+            Log.d(TAG, "liveDataObserver: error: " + stateMediator.getMessage());
+        });
     }
 
     private String roundOffNumber(String resultString) {
@@ -254,26 +241,18 @@ public final class MainActivity extends AppCompatActivity {
         // Thousand
         if (resultString.length() == 4) {
             return resultString.charAt(0) + "." + resultString.charAt(1) + "K";
-        }
-
-         else if (resultString.length() == 5) {
+        } else if (resultString.length() == 5) {
             return resultString.charAt(0) + "" + resultString.charAt(1) + "." + resultString.charAt(2) + "K";
-        }
-
-        else if (resultString.length() == 6) {
+        } else if (resultString.length() == 6) {
             return resultString.charAt(0) + "" + resultString.charAt(1) + "" + resultString.charAt(2) + "K";
         }
 
         // Million
         else if (resultString.length() == 7) {
             return resultString.charAt(0) + "." + resultString.charAt(1) + "M";
-        }
-
-         else if (resultString.length() == 8) {
+        } else if (resultString.length() == 8) {
             return resultString.charAt(0) + "" + resultString.charAt(1) + "." + resultString.charAt(2) + "M";
-        }
-
-        else if (resultString.length() == 9) {
+        } else if (resultString.length() == 9) {
             return resultString.charAt(0) + "" + resultString.charAt(1) + "" + resultString.charAt(2) + "M";
         }
 
@@ -281,77 +260,25 @@ public final class MainActivity extends AppCompatActivity {
         else if (resultString.length() == 10) {
 //            String billionResult = valueOf(Math.round(Math.floor(Double.parseDouble(resultString))));
             return resultString.charAt(0) + "." + resultString.charAt(1) + "B";
-        }
-
-        else if (resultString.length() == 11) {
+        } else if (resultString.length() == 11) {
             return resultString.charAt(0) + "" + resultString.charAt(1) + "." + resultString.charAt(2) + "B";
-        }
-
-        else if (resultString.length() == 12) {
+        } else if (resultString.length() == 12) {
             return resultString.charAt(0) + "" + resultString.charAt(1) + "" + resultString.charAt(2) + "B";
         }
 
         // Trillion
         else if (resultString.length() == 13) {
             return resultString.charAt(0) + "T";
-        }
-
-        else {
+        } else {
             return resultString;
         }
-    }
-
-    private void epochToDate(long epochTime) {
-        Date date = new Date(epochTime);
-        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
-        String formatted = format.format(date);
-        System.out.println(formatted);
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    public final String getDateTime(Date date) {
-
-        String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
-        // split date and time for event created date
-        String[] arrOfStr = dateTime.split(" ", 2);
-        ArrayList<String> dateAndTime = new ArrayList<>(Arrays.asList(arrOfStr));
-
-        // convert date to dd/mm/yyyy
-        Date dateObj = null;
-        try {
-            dateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dateAndTime.get(0));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        String outputDate = new SimpleDateFormat("dd MMM yyyy").format(dateObj);
-        Log.d(TAG, "date: " + outputDate);
-
-        // convert time to 12 hr format
-        Date timeObj = null;
-        try {
-            timeObj = new SimpleDateFormat("H:mm:ss").parse(dateAndTime.get(1));
-        } catch (final ParseException e) {
-            e.printStackTrace();
-        }
-        String outputTime = new SimpleDateFormat("hh:mm a").format(timeObj);
-        Log.d(TAG, "time: " + outputTime);
-
-        return outputDate + " at " + outputTime;
-    }
-
-    public final boolean hasInternet(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        assert cm != null;
-        return cm.getActiveNetworkInfo() != null;
     }
 
     @SuppressLint("WrongConstant")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_statistics, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_statistics_search);
+        final MenuItem searchItem = menu.findItem(R.id.action_statistics_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         searchView.setMaxWidth(Integer.MAX_VALUE);
@@ -384,7 +311,7 @@ public final class MainActivity extends AppCompatActivity {
 
 
     private void searchUsers(String text) {
-        List<CoronaStatisticItem> filteredList = new ArrayList<>();
+        final List<CoronaStatisticItem> filteredList = new ArrayList<>();
         for (CoronaStatisticItem item : coronaStatisticList) {
             if (item.getStatisticName().toLowerCase().trim().contains(text.toLowerCase())) {
                 filteredList.add(item);

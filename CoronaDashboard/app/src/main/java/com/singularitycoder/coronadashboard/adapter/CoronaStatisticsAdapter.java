@@ -39,25 +39,25 @@ public final class CoronaStatisticsAdapter extends RecyclerView.Adapter<Recycler
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_corona_statistic, parent, false);
+        final View view = LayoutInflater.from(context).inflate(R.layout.item_corona_statistic, parent, false);
         return new CoronaStatisticViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         CoronaStatisticItem coronaStatisticItem = statisticList.get(position);
-        if (null != holder) {
-            CoronaStatisticViewHolder coronaStatisticViewHolder = (CoronaStatisticViewHolder) holder;
+        if (null != holder && holder instanceof CoronaStatisticViewHolder) {
+            final CoronaStatisticViewHolder coronaStatisticViewHolder = (CoronaStatisticViewHolder) holder;
             coronaStatisticViewHolder.binding.tvStatisticName.setText(coronaStatisticItem.getStatisticName());
             coronaStatisticViewHolder.binding.tvStatisticValue.setText(coronaStatisticItem.getStatisticValue());
 
             if (position == 1) {
-                coronaStatisticViewHolder.binding.barChart.setVisibility(View.VISIBLE);
+                coronaStatisticViewHolder.binding.barChart.setVisibility(View.GONE);
                 showChart(coronaStatisticViewHolder);
             }
 
             if (position == 2) {
-                coronaStatisticViewHolder.binding.barChart.setVisibility(View.VISIBLE);
+                coronaStatisticViewHolder.binding.barChart.setVisibility(View.GONE);
                 showChart(coronaStatisticViewHolder);
             }
         }
@@ -65,7 +65,7 @@ public final class CoronaStatisticsAdapter extends RecyclerView.Adapter<Recycler
 
     private void showChart(CoronaStatisticViewHolder coronaStatisticViewHolder) {
         // Y axis
-        List<BarEntry> barEntries = new ArrayList<>();
+        final List<BarEntry> barEntries = new ArrayList<>();
         barEntries.add(new BarEntry(44f, 0));
         barEntries.add(new BarEntry(88f, 1));
         barEntries.add(new BarEntry(66f, 2));
@@ -73,15 +73,15 @@ public final class CoronaStatisticsAdapter extends RecyclerView.Adapter<Recycler
         barEntries.add(new BarEntry(44f, 4));
 
         // X axis
-        List<String> dates = new ArrayList<>();
+        final List<String> dates = new ArrayList<>();
         dates.add("April");
         dates.add("May");
         dates.add("June");
         dates.add("July");
         dates.add("Aug");
 
-        BarDataSet barDataSet = new BarDataSet(barEntries, "Values");
-        BarData barData = new BarData(barDataSet);
+        final BarDataSet barDataSet = new BarDataSet(barEntries, "Values");
+        final BarData barData = new BarData(barDataSet);
         coronaStatisticViewHolder.binding.barChart.setData(barData);
         coronaStatisticViewHolder.binding.barChart.setTouchEnabled(false);
         coronaStatisticViewHolder.binding.barChart.setDragEnabled(false);
@@ -105,7 +105,7 @@ public final class CoronaStatisticsAdapter extends RecyclerView.Adapter<Recycler
         notifyDataSetChanged();
     }
 
-    class CoronaStatisticViewHolder extends RecyclerView.ViewHolder {
+    final class CoronaStatisticViewHolder extends RecyclerView.ViewHolder {
 
         @Nullable
         private ItemCoronaStatisticBinding binding;
